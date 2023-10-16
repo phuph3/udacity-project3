@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: udacity-project3-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: udacity-project3-service
+  template:
+    metadata:
+      labels:
+        service: udacity-project3-service
+    spec:
+      containers:
+        - image: *******.dkr.ecr.us-east-1.amazonaws.com/udacity-project3-ecr:latest
+          name: udacity-project3-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5153
+          livenessProbe:
+            httpGet:
+              path: /health_check
+              port: 5153
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /readiness_check
+              port: 5153
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+          resources:
+            requests:
+              memory: "1000Mi"
+              cpu: "250m"
+            limits:
+              memory: "2000Mi"
+              cpu: "500m"
+          envFrom:
+            - secretRef:
+                name: env-secret
+            - configMapRef:
+                name: env-config
+      restartPolicy: Always

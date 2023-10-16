@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: udacity-project3-service
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: "TCP"
+      port: 5153
+      targetPort: 5153
+  selector:
+    service: udacity-project3-service
